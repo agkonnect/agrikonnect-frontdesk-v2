@@ -135,7 +135,7 @@ export default function TodayPage({ isAdmin }: Props) {
         <div className="card">
           {/* Card header */}
           <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>Recent Logs</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>Today's Logs</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontSize: 11, color: 'var(--dim)' }}>{logs.length} records</span>
               <button

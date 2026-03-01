@@ -39,12 +39,16 @@ export function useLogs() {
     setLoading(true)
     setError(null)
 
+    const todayStart = startOfDay(new Date()).toISOString()
+    const todayEnd   = endOfDay(new Date()).toISOString()
+
     const [logsResult, profiles] = await Promise.all([
       supabase
         .from('daily_logs')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(500),
+        .gte('created_at', todayStart)
+        .lte('created_at', todayEnd)
+        .order('created_at', { ascending: false }),
       fetchProfiles(),
     ])
 
@@ -57,12 +61,10 @@ export function useLogs() {
       return
     }
 
-    // Show ALL fetched logs in the table — no date filter, most recent first
     const allLogs = (logsResult.data ?? []) as unknown as DailyLog[]
     const rows = withProfiles(allLogs, profiles)
     setLogs(rows)
 
-    // KPI stats: count all fetched logs (mirrors what the table shows)
     const total   = rows.length
     const farmers = rows.filter(r => r.contact_type === 'farmer').length
     const buyers  = rows.filter(r => r.contact_type === 'buyer').length
