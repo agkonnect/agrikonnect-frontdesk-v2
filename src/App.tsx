@@ -53,11 +53,12 @@ export default function App() {
           <Route element={<Layout profile={profile} onSignOut={signOut} />}>
             <Route index element={<Navigate to="/new" replace />} />
             <Route path="/new"       element={<NewLogPage />} />
-            <Route path="/today"     element={<TodayPage isAdmin={isAdmin} />} />
+            <Route path="/logs"       element={<TodayPage isAdmin={isAdmin} />} />
             <Route path="/followups"  element={<FollowupsPage />} />
             <Route path="/analytics"  element={<AnalyticsPage />} />
             <Route path="/users"      element={<UsersPage />} />
             <Route path="/settings"   element={<SettingsPage />} />
+            <Route path="/today"      element={<Navigate to="/logs" replace />} />
             <Route path="*"          element={<Navigate to="/new" replace />} />
           </Route>
         </Routes>

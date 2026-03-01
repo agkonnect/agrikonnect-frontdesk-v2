@@ -10,7 +10,7 @@ interface Props {
 
 const PAGE_META: Record<string, { title: string; sub: string }> = {
   '/new':        { title: 'New Log',     sub: 'Record a new contact interaction' },
-  '/today':      { title: 'Today',       sub: new Date().toLocaleDateString('en-GH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) },
+  '/logs':       { title: 'Logs',        sub: 'Browse and filter contact logs by date' },
   '/followups':  { title: 'Follow-ups',  sub: 'Track and action pending follow-ups' },
   '/analytics':  { title: 'Analytics',   sub: 'Performance overview and trends' },
   '/users':      { title: 'Users',       sub: 'Manage team accounts and permissions' },

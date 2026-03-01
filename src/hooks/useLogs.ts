@@ -1,14 +1,13 @@
 import { useState, useCallback } from 'react'
-import { startOfDay, endOfDay, isWithinInterval } from 'date-fns'
 import toast from 'react-hot-toast'
 import { supabase } from '../lib/supabase'
 import type { DailyLog, DailyLogWithProfiles, Profile } from '../types'
 
-interface TodayStats {
+interface LogStats {
   total: number
   farmers: number
   buyers: number
-  followupsDueToday: number
+  pendingFollowups: number
 }
 
 async function fetchProfiles(): Promise<Profile[]> {
@@ -28,26 +27,22 @@ function withProfiles(logs: DailyLog[], profiles: Profile[]): DailyLogWithProfil
   }))
 }
 
-
 export function useLogs() {
   const [logs, setLogs] = useState<DailyLogWithProfiles[]>([])
-  const [stats, setStats] = useState<TodayStats>({ total: 0, farmers: 0, buyers: 0, followupsDueToday: 0 })
+  const [stats, setStats] = useState<LogStats>({ total: 0, farmers: 0, buyers: 0, pendingFollowups: 0 })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchTodayLogs = useCallback(async () => {
+  const fetchLogs = useCallback(async (start: Date, end: Date) => {
     setLoading(true)
     setError(null)
-
-    const todayStart = startOfDay(new Date()).toISOString()
-    const todayEnd   = endOfDay(new Date()).toISOString()
 
     const [logsResult, profiles] = await Promise.all([
       supabase
         .from('daily_logs')
         .select('*')
-        .gte('created_at', todayStart)
-        .lte('created_at', todayEnd)
+        .gte('created_at', start.toISOString())
+        .lte('created_at', end.toISOString())
         .order('created_at', { ascending: false }),
       fetchProfiles(),
     ])
@@ -65,20 +60,12 @@ export function useLogs() {
     const rows = withProfiles(allLogs, profiles)
     setLogs(rows)
 
-    const total   = rows.length
-    const farmers = rows.filter(r => r.contact_type === 'farmer').length
-    const buyers  = rows.filter(r => r.contact_type === 'buyer').length
+    const total            = rows.length
+    const farmers          = rows.filter(r => r.contact_type === 'farmer').length
+    const buyers           = rows.filter(r => r.contact_type === 'buyer').length
+    const pendingFollowups = rows.filter(r => r.followup_status === 'pending').length
 
-    const followupsDueToday = rows.filter(r =>
-      r.followup_status === 'pending' &&
-      r.followup_datetime != null &&
-      isWithinInterval(new Date(r.followup_datetime), {
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-      })
-    ).length
-
-    setStats({ total, farmers, buyers, followupsDueToday })
+    setStats({ total, farmers, buyers, pendingFollowups })
     setLoading(false)
   }, [])
 
@@ -98,5 +85,5 @@ export function useLogs() {
     return updated
   }, [])
 
-  return { logs, stats, loading, error, fetchTodayLogs, updateLog }
+  return { logs, stats, loading, error, fetchLogs, updateLog }
 }
