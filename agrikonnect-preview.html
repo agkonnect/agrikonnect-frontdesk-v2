@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AgriKonnect Front Desk — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #09090b;
+    --surface:  #18181b;
+    --surface2: #27272a;
+    --border:   #3f3f46;
+    --border2:  #52525b;
+    --text:     #f4f4f5;
+    --muted:    #a1a1aa;
+    --dim:      #71717a;
+    --faint:    #3f3f46;
+    --emerald:  #10b981;
+    --em-light: #34d399;
+    --em-dim:   rgba(16,185,129,.12);
+    --em-border:rgba(16,185,129,.22);
+    --amber:    #f59e0b;
+    --red:      #ef4444;
+    --blue:     #3b82f6;
+    --lime:     #84cc16;
+    --violet:   #8b5cf6;
+    --sky:      #0ea5e9;
+  }
+
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+
+  /* ── Scrollbar ─────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 99px; }
+
+  /* ── Layout ────────────────────────────────────────── */
+  .app { display: flex; height: 100vh; }
+
+  /* ── Sidebar ───────────────────────────────────────── */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+  }
+  .logo {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 30px; height: 30px;
+    background: var(--emerald);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 16px rgba(16,185,129,.35);
+  }
+  .logo-icon svg { width: 16px; height: 16px; color: #fff; }
+  .logo-text { line-height: 1.1; }
+  .logo-text .brand { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+  .logo-text .sub { font-size: 9px; text-transform: uppercase; letter-spacing: .12em; color: var(--dim); font-weight: 600; }
+
+  nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    cursor: pointer; transition: all .15s;
+    border: 1px solid transparent;
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active {
+    background: var(--em-dim);
+    color: var(--em-light);
+    border-color: var(--em-border);
+  }
+  .nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: rgba(245,158,11,.15);
+    color: var(--amber);
+    border: 1px solid rgba(245,158,11,.25);
+    font-size: 10px; font-weight: 700;
+    padding: 1px 6px; border-radius: 99px;
+  }
+
+  .user-card {
+    padding: 10px 8px;
+    border-top: 1px solid var(--border);
+  }
+  .user-inner {
+    background: rgba(255,255,255,.04);
+    border-radius: 8px; padding: 9px 11px;
+  }
+  .user-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .user-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 3px; }
+  .role-badge {
+    font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .1em;
+    padding: 2px 6px; border-radius: 4px;
+  }
+  .role-admin { background: rgba(245,158,11,.12); color: var(--amber); }
+  .role-frontdesk { background: var(--em-dim); color: var(--em-light); }
+  .signout-btn { font-size: 10px; color: var(--dim); cursor: pointer; background: none; border: none; }
+  .signout-btn:hover { color: var(--muted); }
+
+  /* ── Main ──────────────────────────────────────────── */
+  .main { flex: 1; overflow-y: auto; }
+
+  /* ── Page header ───────────────────────────────────── */
+  .page-header {
+    padding: 24px 28px 0;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -.4px;
+  }
+  .page-header p { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+  /* ── Screen visibility ─────────────────────────────── */
+  .screen { display: none; padding-bottom: 40px; }
+  .screen.active { display: block; }
+
+  /* ── Cards ─────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .card-count { font-size: 11px; color: var(--dim); }
+
+  /* ── KPI ────────────────────────────────────────────── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; padding: 0 28px; margin-bottom: 20px; }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: .04;
+    border-radius: 12px;
+  }
+  .kpi-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px; font-weight: 700; color: #fff; line-height: 1;
+  }
+  .kpi-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; margin-top: 5px; }
+
+  /* ── Table ──────────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: var(--dim); padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(63,63,70,.4);
+    transition: background .1s;
+    cursor: pointer;
+  }
+  tbody tr:hover { background: rgba(255,255,255,.025); }
+  tbody tr:last-child { border-bottom: none; }
+  td {
+    padding: 10px 14px;
+    font-size: 12px; color: var(--muted);
+    white-space: nowrap;
+  }
+  td.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  td strong { color: var(--text); font-weight: 500; }
+  td .sub { color: var(--dim); font-size: 11px; display: block; }
+
+  /* ── Badges ─────────────────────────────────────────── */
+  .badge {
+    display: inline-flex; align-items: center;
+    font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    padding: 2px 7px; border-radius: 4px;
+    border: 1px solid transparent;
+  }
+  .b-farmer   { background: rgba(132,204,22,.1); color: #a3e635; border-color: rgba(132,204,22,.2); }
+  .b-buyer    { background: rgba(59,130,246,.1); color: #60a5fa; border-color: rgba(59,130,246,.2); }
+  .b-distributor { background: rgba(249,115,22,.1); color: #fb923c; border-color: rgba(249,115,22,.2); }
+  .b-partner  { background: rgba(139,92,246,.1); color: #a78bfa; border-color: rgba(139,92,246,.2); }
+  .b-inquiry  { background: rgba(113,113,122,.15); color: var(--muted); border-color: var(--faint); }
+
+  .b-resolved     { background: rgba(16,185,129,.1);  color: #34d399; border-color: rgba(16,185,129,.2); }
+  .b-referred     { background: rgba(14,165,233,.1);  color: #38bdf8; border-color: rgba(14,165,233,.2); }
+  .b-scheduled    { background: rgba(139,92,246,.1);  color: #a78bfa; border-color: rgba(139,92,246,.2); }
+  .b-not-qualified{ background: rgba(113,113,122,.15);color: var(--muted); border-color: var(--faint); }
+  .b-pending-out  { background: rgba(245,158,11,.1);  color: #fbbf24; border-color: rgba(245,158,11,.2); }
+
+  .b-none    { background: rgba(113,113,122,.15); color: var(--dim); border-color: var(--faint); }
+  .b-pending { background: rgba(245,158,11,.12); color: var(--amber); border-color: rgba(245,158,11,.22); }
+  .b-done    { background: rgba(16,185,129,.1); color: var(--em-light); border-color: rgba(16,185,129,.2); }
+
+  /* ── Form ────────────────────────────────────────────── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-grid.single { grid-template-columns: 1fr; }
+  .field label {
+    display: block;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: var(--dim); margin-bottom: 5px;
+  }
+  .field label .req { color: var(--emerald); }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    appearance: none;
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--emerald);
+    box-shadow: 0 0 0 3px rgba(16,185,129,.1);
+  }
+  .field textarea { resize: none; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--faint); }
+
+  .section-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .section-block h3 {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--dim); margin-bottom: 14px;
+  }
+
+  /* ── Toggle ─────────────────────────────────────────── */
+  .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .toggle {
+    width: 36px; height: 20px;
+    background: var(--surface2);
+    border-radius: 99px;
+    position: relative; cursor: pointer;
+    transition: background .2s;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .toggle.on { background: var(--emerald); border-color: var(--emerald); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    background: #fff; border-radius: 99px;
+    transition: transform .2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  }
+  .toggle.on::after { transform: translateX(16px); }
+  .toggle-label { font-size: 13px; color: var(--muted); }
+
+  /* ── Buttons ─────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    cursor: pointer; border: 1px solid transparent;
+    transition: all .15s;
+  }
+  .btn-primary { background: var(--emerald); color: #fff; }
+  .btn-primary:hover { background: #059669; }
+  .btn-ghost { background: transparent; color: var(--muted); border-color: var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+  .btn-sm { padding: 5px 12px; font-size: 11px; border-radius: 6px; }
+  .btn-done {
+    background: var(--em-dim); color: var(--em-light);
+    border-color: var(--em-border);
+    padding: 5px 12px; font-size: 11px; font-weight: 700;
+    border-radius: 6px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: background .15s;
+  }
+  .btn-done:hover { background: rgba(16,185,129,.2); }
+
+  .btn-row { display: flex; justify-content: flex-end; gap: 10px; padding: 0 28px; }
+
+  /* ── Tabs ────────────────────────────────────────────── */
+  .tabs {
+    display: flex; gap: 3px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    width: fit-content;
+    margin-bottom: 18px;
+  }
+  .tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 16px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    color: var(--dim); transition: all .15s;
+    border: 1px solid transparent;
+  }
+  .tab:hover { color: var(--muted); }
+  .tab.active { background: var(--em-dim); color: var(--em-light); border-color: var(--em-border); }
+  .tab-count {
+    font-size: 10px; font-weight: 700;
+    padding: 1px 6px; border-radius: 99px;
+    background: rgba(255,255,255,.07); color: var(--dim);
+  }
+  .tab.active .tab-count { background: rgba(16,185,129,.15); color: var(--em-light); }
+
+  /* ── Overdue row ─────────────────────────────────────── */
+  .overdue-time { color: #f87171 !important; }
+  .overdue-tag { font-size: 9px; font-weight: 700; color: #ef4444; text-transform: uppercase; letter-spacing: .08em; display: block; }
+
+  /* ── Refresh button ──────────────────────────────────── */
+  .refresh-btn {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--dim);
+    cursor: pointer; background: none; border: none;
+    transition: color .15s;
+  }
+  .refresh-btn:hover { color: var(--muted); }
+
+  /* ── Panel overlay ───────────────────────────────────── */
+  .overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(9,9,11,.75);
+    backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: flex-end;
+  }
+  .overlay.open { display: flex; }
+
+  .panel {
+    width: 460px; height: 100vh;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+    animation: slideIn .22s ease-out;
+  }
+  @keyframes slideIn {
+    from { transform: translateX(32px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+  .panel-header {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: var(--surface); z-index: 1;
+  }
+  .panel-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #fff; }
+  .panel-id { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--dim); margin-top: 1px; }
+  .close-btn {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--dim); cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .close-btn:hover { background: var(--surface2); color: var(--text); }
+
+  .panel-body { padding: 20px 22px; flex: 1; }
+
+  .detail-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+  .detail-key {
+    width: 100px; flex-shrink: 0;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: var(--dim); padding-top: 1px;
+  }
+  .detail-val { font-size: 12px; color: var(--text); }
+  .detail-val.empty { color: var(--faint); }
+
+  .panel-section { margin-bottom: 18px; }
+  .panel-section-title {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--dim); margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .followup-box {
+    background: rgba(245,158,11,.07);
+    border: 1px solid rgba(245,158,11,.15);
+    border-radius: 10px; padding: 14px;
+    margin-bottom: 18px;
+  }
+  .followup-box .panel-section-title { color: var(--amber); border-color: rgba(245,158,11,.2); }
+
+  .edit-section {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+  }
+  .edit-title {
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--dim); margin-bottom: 12px;
+  }
+  .save-btn {
+    width: 100%; padding: 9px; border-radius: 8px;
+    background: var(--emerald); color: #fff;
+    font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer; margin-top: 12px;
+    transition: background .15s;
+  }
+  .save-btn:hover { background: #059669; }
+
+  /* ── Mark done modal ─────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(9,9,11,.85);
+    backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 24px;
+    width: 420px;
+    animation: popIn .2s ease-out;
+  }
+  @keyframes popIn {
+    from { transform: scale(.95); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .modal h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .modal p { font-size: 12px; color: var(--dim); margin-bottom: 18px; }
+  .modal-footer { display: flex; gap: 10px; margin-top: 16px; }
+
+  /* ── Toast ───────────────────────────────────────────── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: #18281f;
+    border: 1px solid rgba(16,185,129,.3);
+    border-radius: 10px; padding: 11px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 500; color: #a7f3d0;
+    box-shadow: 0 4px 24px rgba(0,0,0,.4);
+    transform: translateY(60px); opacity: 0;
+    transition: all .25s;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast svg { color: var(--emerald); flex-shrink: 0; }
+
+  /* ── Misc ────────────────────────────────────────────── */
+  .px-28 { padding-left: 28px; padding-right: 28px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-20 { margin-bottom: 20px; }
+  .text-emerald { color: var(--emerald); }
+  .strikerow td { opacity: .45; }
+  .done-icon { color: var(--em-light); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══════ SIDEBAR ═══════ -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div class="brand">AgriKonnect</div>
+        <div class="sub">Front Desk</div>
+      </div>
+    </div>
+
+    <nav>
+      <div class="nav-item active" onclick="showScreen('new-log')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        New Log
+      </div>
+      <div class="nav-item" onclick="showScreen('today')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Today
+      </div>
+      <div class="nav-item" onclick="showScreen('followups')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Follow-ups
+        <span class="nav-badge">5</span>
+      </div>
+      <div class="nav-item" onclick="showScreen('settings')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Settings
+      </div>
+    </nav>
+
+    <div class="user-card">
+      <div class="user-inner">
+        <div class="user-name">Abena Boateng</div>
+        <div class="user-meta">
+          <span class="role-badge role-frontdesk">Frontdesk</span>
+          <button class="signout-btn">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════ MAIN ═══════ -->
+  <main class="main">
+
+    <!-- ──── NEW LOG ──────────────────────────────────── -->
+    <div id="screen-new-log" class="screen active">
+      <div class="page-header">
+        <div>
+          <h1>New Log</h1>
+          <p>Record a new contact interaction</p>
+        </div>
+      </div>
+
+      <div class="px-28">
+
+        <!-- Contact details -->
+        <div class="section-block">
+          <h3>Contact Details</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label>Contact Type <span class="req">*</span></label>
+              <select><option>Farmer</option><option>Buyer</option><option>Distributor</option><option>Partner</option><option>Inquiry</option></select>
+            </div>
+            <div class="field">
+              <label>Channel <span class="req">*</span></label>
+              <select><option>Walk-in</option><option>Phone</option><option>WhatsApp</option><option>TikTok</option><option>Instagram</option><option>Website</option><option>Referral</option></select>
+            </div>
+            <div class="field">
+              <label>Contact Name</label>
+              <input type="text" placeholder="Full name (optional)" />
+            </div>
+            <div class="field">
+              <label>Phone <span class="req">*</span></label>
+              <input type="tel" placeholder="0XX XXX XXXX" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="section-block">
+          <h3>Location</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label>Region <span class="req">*</span></label>
+              <select>
+                <option>— Select region —</option>
+                <option selected>Ashanti</option>
+                <option>Greater Accra</option>
+                <option>Northern</option>
+                <option>Volta</option>
+                <option>Bono</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>District <span class="req">*</span></label>
+              <input type="text" placeholder="e.g. Kumasi Metropolitan" />
+            </div>
+            <div class="field">
+              <label>Community</label>
+              <input type="text" placeholder="Village / suburb" />
+            </div>
+            <div class="field">
+              <label>GPS Code</label>
+              <input type="text" placeholder="AK-019-4422" style="font-family:'JetBrains Mono',monospace;font-size:12px" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Intent -->
+        <div class="section-block">
+          <h3>Intent &amp; Commodity</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label>Intent <span class="req">*</span></label>
+              <select><option>Sell Produce</option><option>Buy Produce</option><option>Distribution</option><option>Logistics</option><option>Pricing Info</option><option>Support</option></select>
+            </div>
+            <div class="field">
+              <label>Timeframe</label>
+              <select><option>Immediate</option><option>Within 1 week</option><option selected>Within 1 month</option><option>Unknown</option></select>
+            </div>
+            <div class="field">
+              <label>Crop / Produce</label>
+              <input type="text" placeholder="e.g. Maize, Tomatoes" />
+            </div>
+            <div class="field">
+              <label>Quantity</label>
+              <input type="text" placeholder="e.g. 50 bags, 2 tonnes" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Outcome -->
+        <div class="section-block">
+          <h3>Outcome</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label>Outcome <span class="req">*</span></label>
+              <select><option>Resolved</option><option>Referred</option><option selected>Scheduled Callback</option><option>Not Qualified</option><option>Pending</option></select>
+            </div>
+            <div class="field">
+              <label>Notes</label>
+              <textarea rows="3" placeholder="Additional notes…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Follow-up -->
+        <div class="section-block">
+          <h3>Follow-up</h3>
+          <div class="toggle-row">
+            <div class="toggle on" onclick="this.classList.toggle('on'); document.getElementById('fu-fields').style.display = this.classList.contains('on') ? 'grid' : 'none'"></div>
+            <span class="toggle-label">Follow-up needed</span>
+          </div>
+          <div id="fu-fields" class="form-grid">
+            <div class="field">
+              <label>Follow-up Date / Time <span class="req">*</span></label>
+              <input type="datetime-local" value="2026-03-01T10:30" />
+            </div>
+            <div class="field">
+              <label>Assigned To <span class="req">*</span></label>
+              <select>
+                <option>Abena Boateng</option>
+                <option>Kwame Mensah</option>
+                <option>Ama Owusu</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row" style="padding:0;margin-bottom:28px;">
+          <button class="btn btn-ghost">Reset</button>
+          <button class="btn btn-primary" onclick="showToast('Log saved successfully!')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Save Log
+          </button>
+        </div>
+      </div>
+    </div><!-- /new-log -->
+
+
+    <!-- ──── TODAY ──────────────────────────────────────── -->
+    <div id="screen-today" class="screen">
+      <div class="page-header">
+        <div>
+          <h1>Today</h1>
+          <p id="today-date">Saturday, February 28, 2026</p>
+        </div>
+        <button class="refresh-btn">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-value">14</div>
+          <div class="kpi-label" style="color:var(--dim)">Total Logs</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" style="color:#a3e635">9</div>
+          <div class="kpi-label" style="color:#84cc16">Farmers</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" style="color:#60a5fa">3</div>
+          <div class="kpi-label" style="color:#3b82f6">Buyers</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" style="color:#fbbf24">5</div>
+          <div class="kpi-label" style="color:var(--amber)">Follow-ups Due</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="px-28 mb-20">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Today's Logs</span>
+            <span class="card-count">14 records</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th><th>Type</th><th>Channel</th><th>Phone</th>
+                  <th>Region / District</th><th>Intent</th><th>Outcome</th>
+                  <th>Follow-up</th><th>Assigned</th>
+                </tr>
+              </thead>
+              <tbody id="today-tbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /today -->
+
+
+    <!-- ──── FOLLOW-UPS ─────────────────────────────────── -->
+    <div id="screen-followups" class="screen">
+      <div class="page-header">
+        <div>
+          <h1>Follow-ups</h1>
+          <p>Track and action pending follow-ups</p>
+        </div>
+      </div>
+
+      <div class="px-28">
+        <div class="tabs" id="fu-tabs">
+          <div class="tab active" onclick="switchTab('today-tab')">Due Today <span class="tab-count">3</span></div>
+          <div class="tab" onclick="switchTab('overdue-tab')">Overdue <span class="tab-count">2</span></div>
+          <div class="tab" onclick="switchTab('all-tab')">All Pending <span class="tab-count">5</span></div>
+        </div>
+
+        <!-- Due Today -->
+        <div id="today-tab" class="card mb-20">
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Due Date/Time</th><th>Phone / Name</th><th>Location</th>
+                <th>Intent + Crop</th><th>Assigned To</th><th>Notes</th><th>Action</th>
+              </tr></thead>
+              <tbody id="fu-today-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Overdue -->
+        <div id="overdue-tab" class="card mb-20" style="display:none">
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Due Date/Time</th><th>Phone / Name</th><th>Location</th>
+                <th>Intent + Crop</th><th>Assigned To</th><th>Notes</th><th>Action</th>
+              </tr></thead>
+              <tbody id="fu-overdue-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- All -->
+        <div id="all-tab" class="card mb-20" style="display:none">
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Due Date/Time</th><th>Phone / Name</th><th>Location</th>
+                <th>Intent + Crop</th><th>Assigned To</th><th>Notes</th><th>Action</th>
+              </tr></thead>
+              <tbody id="fu-all-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /followups -->
+
+
+    <!-- ──── SETTINGS ───────────────────────────────────── -->
+    <div id="screen-settings" class="screen">
+      <div class="page-header"><div><h1>Settings</h1><p>Your account details</p></div></div>
+      <div class="px-28">
+        <div class="card" style="max-width:440px;margin-bottom:14px">
+          <div class="card-header"><span class="card-title">Account</span></div>
+          <div style="padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+            <div class="detail-row"><span class="detail-key">Name</span><span class="detail-val">Abena Boateng</span></div>
+            <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val mono" style="font-family:'JetBrains Mono',monospace;font-size:12px">abena@agrikonnect.com</span></div>
+            <div class="detail-row"><span class="detail-key">Role</span><span class="role-badge role-frontdesk">Frontdesk</span></div>
+            <div class="detail-row"><span class="detail-key">Member since</span><span class="detail-val" style="color:var(--muted)">Jan 15, 2026</span></div>
+            <div style="padding-top:12px;border-top:1px solid var(--border)">
+              <button class="btn btn-ghost btn-sm">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="max-width:440px">
+          <div class="card-header"><span class="card-title">App</span></div>
+          <div style="padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+            <div class="detail-row"><span class="detail-key">Version</span><span class="mono" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim)">1.0.0</span></div>
+            <div class="detail-row"><span class="detail-key">Platform</span><span style="font-size:12px;color:var(--muted)">AgriKonnect Front Desk</span></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /settings -->
+
+  </main>
+</div>
+
+
+<!-- ═══════ DETAIL PANEL ═══════ -->
+<div class="overlay" id="detail-overlay" onclick="closePanel()">
+  <div class="panel" onclick="event.stopPropagation()">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">Log Details</div>
+        <div class="panel-id" id="panel-id">a3f0b1c2…</div>
+      </div>
+      <button class="close-btn" onclick="closePanel()">✕</button>
+    </div>
+    <div class="panel-body" id="panel-body"></div>
+  </div>
+</div>
+
+
+<!-- ═══════ MARK DONE MODAL ═══════ -->
+<div class="modal-overlay" id="done-overlay" onclick="closeDoneModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>Mark Follow-up Done</h3>
+    <p id="done-modal-subtitle">0244 123 456 · Kofi Asante</p>
+    <div class="field">
+      <label>Done note <span style="color:var(--dim);font-weight:400;text-transform:none">(optional)</span></label>
+      <textarea id="done-note" rows="3" placeholder="What was the outcome of this follow-up?"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeDoneModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="confirmDone()">Confirm Done</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════ TOAST ═══════ -->
+<div id="toast">
+  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+  <span id="toast-msg">Log saved successfully!</span>
+</div>
+
+
+<script>
+// ── Dummy data ────────────────────────────────────────────
+const todayLogs = [
+  { time:'08:14', type:'farmer',  ch:'walk-in',  phone:'0244 783 221', name:'Kofi Asante',   district:'Kumasi Metro', region:'Ashanti',      intent:'sell',    crop:'Maize · 30 bags',  outcome:'resolved',          fu:'none',    assigned:'' },
+  { time:'08:47', type:'buyer',   ch:'phone',    phone:'0302 456 789', name:'Mensah Traders',district:'Accra Central',region:'Greater Accra',intent:'buy',     crop:'Tomatoes · 5t',    outcome:'scheduled_callback',fu:'pending', assigned:'Abena B.' },
+  { time:'09:05', type:'farmer',  ch:'whatsapp', phone:'0557 002 319', name:'Akua Nyarko',   district:'Ejisu',        region:'Ashanti',      intent:'sell',    crop:'Yam · 10 bags',    outcome:'referred',          fu:'none',    assigned:'' },
+  { time:'09:33', type:'inquiry', ch:'website',  phone:'0200 871 440', name:null,            district:'Tamale Metro', region:'Northern',     intent:'pricing', crop:null,               outcome:'resolved',          fu:'none',    assigned:'' },
+  { time:'10:01', type:'farmer',  ch:'walk-in',  phone:'0244 901 567', name:'Yaw Boateng',   district:'Kintampo',     region:'Bono East',    intent:'sell',    crop:'Groundnuts · 8 bags',outcome:'pending',         fu:'pending', assigned:'Kwame M.' },
+  { time:'10:22', type:'distributor',ch:'referral',phone:'0501 234 456',name:'Delta Agro',   district:'Suame',        region:'Ashanti',      intent:'distributor',crop:null,           outcome:'scheduled_callback',fu:'pending', assigned:'Abena B.' },
+  { time:'10:55', type:'farmer',  ch:'tiktok',   phone:'0246 318 009', name:'Afia Darko',    district:'Mampong',      region:'Ashanti',      intent:'sell',    crop:'Pepper · 20 bags', outcome:'resolved',          fu:'none',    assigned:'' },
+  { time:'11:30', type:'buyer',   ch:'instagram',phone:'0302 788 001', name:'FreshMart Ltd', district:'Osu',          region:'Greater Accra',intent:'buy',     crop:'Cassava · 2t',     outcome:'referred',          fu:'pending', assigned:'Ama O.' },
+  { time:'12:04', type:'farmer',  ch:'walk-in',  phone:'0244 219 337', name:'Kwabena Adu',   district:'Offinso',      region:'Ashanti',      intent:'support', crop:null,               outcome:'resolved',          fu:'none',    assigned:'' },
+  { time:'12:41', type:'farmer',  ch:'phone',    phone:'0599 441 812', name:'Abena Kusi',    district:'Techiman',     region:'Bono East',    intent:'sell',    crop:'Cowpea · 15 bags',  outcome:'scheduled_callback',fu:'pending',assigned:'Kwame M.' },
+  { time:'13:15', type:'partner', ch:'website',  phone:'0302 991 005', name:'GreenChain Co.',district:'Tema',         region:'Greater Accra',intent:'logistics',crop:null,             outcome:'resolved',          fu:'none',    assigned:'' },
+  { time:'14:02', type:'farmer',  ch:'walk-in',  phone:'0244 672 883', name:'Opoku Acheampong',district:'Ahafo Ano',  region:'Ashanti',      intent:'sell',    crop:'Maize · 60 bags',  outcome:'resolved',          fu:'done',    assigned:'Ama O.' },
+  { time:'14:55', type:'farmer',  ch:'whatsapp', phone:'0556 203 774', name:'Esi Asante',    district:'Keta',         region:'Volta',        intent:'sell',    crop:'Shrimp · 2 crates',outcome:'referred',          fu:'none',    assigned:'' },
+  { time:'15:38', type:'buyer',   ch:'phone',    phone:'0200 543 129', name:'Royal Foods',   district:'Spintex',      region:'Greater Accra',intent:'buy',     crop:'Plantain · 3t',    outcome:'scheduled_callback',fu:'pending', assigned:'Abena B.' },
+];
+
+const followups = [
+  { due:'Today 10:30', phone:'0302 456 789', name:'Mensah Traders',   district:'Accra Central',  region:'Greater Accra',intent:'Buy',        crop:'Tomatoes · 5t',      assigned:'Abena Boateng', notes:'Awaiting price confirmation from warehouse',       overdue:false },
+  { due:'Today 11:00', phone:'0244 901 567', name:'Yaw Boateng',      district:'Kintampo',        region:'Bono East',   intent:'Sell',       crop:'Groundnuts · 8 bags', assigned:'Kwame Mensah',  notes:'Check transport availability from Kintampo',       overdue:false },
+  { due:'Today 14:00', phone:'0200 543 129', name:'Royal Foods',      district:'Spintex',         region:'Greater Accra',intent:'Buy',       crop:'Plantain · 3t',       assigned:'Abena Boateng', notes:'Send updated price list and delivery terms',       overdue:false },
+  { due:'Yesterday 09:00', phone:'0501 234 456', name:'Delta Agro',   district:'Suame',           region:'Ashanti',     intent:'Distributor',crop:null,                  assigned:'Abena Boateng', notes:'Discuss partnership onboarding documents',         overdue:true },
+  { due:'Feb 26, 15:30', phone:'0599 441 812', name:'Abena Kusi',     district:'Techiman',        region:'Bono East',   intent:'Sell',       crop:'Cowpea · 15 bags',    assigned:'Kwame Mensah',  notes:'Farmer needs help finding bulk buyer for cowpea',  overdue:true },
+];
+
+// ── Render Today table ────────────────────────────────────
+function renderToday() {
+  const tbody = document.getElementById('today-tbody');
+  tbody.innerHTML = '';
+  todayLogs.forEach((r, i) => {
+    const typeBadge = { farmer:'b-farmer', buyer:'b-buyer', distributor:'b-distributor', partner:'b-partner', inquiry:'b-inquiry' }[r.type] || 'b-inquiry';
+    const outBadge  = { resolved:'b-resolved', referred:'b-referred', scheduled_callback:'b-scheduled', not_qualified:'b-not-qualified', pending:'b-pending-out' }[r.outcome] || '';
+    const fuBadge   = { none:'b-none', pending:'b-pending', done:'b-done' }[r.fu] || 'b-none';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="mono">${r.time}</td>
+      <td><span class="badge ${typeBadge}">${r.type}</span></td>
+      <td style="text-transform:capitalize">${r.ch}</td>
+      <td class="mono">${r.phone}</td>
+      <td><strong>${r.district}</strong><span class="sub">${r.region}</span></td>
+      <td style="text-transform:capitalize">${r.intent}</td>
+      <td><span class="badge ${outBadge}">${r.outcome.replace('_',' ')}</span></td>
+      <td><span class="badge ${fuBadge}">${r.fu}</span></td>
+      <td>${r.assigned || '<span style="color:var(--faint)">—</span>'}</td>
+    `;
+    tr.onclick = () => openPanel(r, i);
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Render Follow-ups ─────────────────────────────────────
+function fuRow(r, idx) {
+  return `
+    <tr id="fu-row-${idx}" ${r.overdue ? '' : ''}>
+      <td class="mono">
+        <span class="${r.overdue ? 'overdue-time' : ''}">${r.due}</span>
+        ${r.overdue ? '<span class="overdue-tag">Overdue</span>' : ''}
+      </td>
+      <td>
+        <div class="mono">${r.phone}</div>
+        <span class="sub">${r.name}</span>
+      </td>
+      <td><strong>${r.district}</strong><span class="sub">${r.region}</span></td>
+      <td>
+        <span style="text-transform:capitalize">${r.intent}</span>
+        ${r.crop ? `<span class="sub">${r.crop}</span>` : ''}
+      </td>
+      <td>${r.assigned}</td>
+      <td style="max-width:150px"><span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--dim);font-size:11px">${r.notes}</span></td>
+      <td>
+        <button class="btn-done" onclick="openDoneModal(${idx})">
+          <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          Mark Done
+        </button>
+      </td>
+    </tr>
+  `;
+}
+
+function renderFollowups() {
+  const due     = followups.filter(f => !f.overdue);
+  const overdue = followups.filter(f => f.overdue);
+  const all     = followups;
+
+  document.getElementById('fu-today-tbody').innerHTML   = due.map((f,i) => fuRow(f, followups.indexOf(f))).join('');
+  document.getElementById('fu-overdue-tbody').innerHTML = overdue.map((f,i) => fuRow(f, followups.indexOf(f))).join('');
+  document.getElementById('fu-all-tbody').innerHTML     = all.map((f,i) => fuRow(f,i)).join('');
+}
+
+// ── Navigation ────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  const items = document.querySelectorAll('.nav-item');
+  const map = { 'new-log':0, 'today':1, 'followups':2, 'settings':3 };
+  items[map[name]].classList.add('active');
+}
+
+// ── Tab switching ─────────────────────────────────────────
+function switchTab(tabId) {
+  ['today-tab','overdue-tab','all-tab'].forEach(t => {
+    document.getElementById(t).style.display = t === tabId ? '' : 'none';
+  });
+  document.querySelectorAll('#fu-tabs .tab').forEach((t,i) => {
+    t.classList.toggle('active', ['today-tab','overdue-tab','all-tab'][i] === tabId);
+  });
+}
+
+// ── Detail panel ──────────────────────────────────────────
+function openPanel(r, i) {
+  document.getElementById('panel-id').textContent = 'log-' + String(i+1).padStart(4,'0') + ' · ' + r.time;
+  const typeBadge = { farmer:'b-farmer', buyer:'b-buyer', distributor:'b-distributor', partner:'b-partner', inquiry:'b-inquiry' }[r.type] || '';
+  const outBadge  = { resolved:'b-resolved', referred:'b-referred', scheduled_callback:'b-scheduled', not_qualified:'b-not-qualified', pending:'b-pending-out' }[r.outcome] || '';
+  const fuBadge   = { none:'b-none', pending:'b-pending', done:'b-done' }[r.fu] || '';
+
+  document.getElementById('panel-body').innerHTML = `
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
+      <span class="badge ${typeBadge}">${r.type}</span>
+      <span class="badge ${outBadge}">${r.outcome.replace('_',' ')}</span>
+      <span class="badge ${fuBadge}">${r.fu}</span>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Contact</div>
+      <div class="detail-row"><span class="detail-key">Time</span><span class="detail-val">${r.time} · Feb 28, 2026</span></div>
+      <div class="detail-row"><span class="detail-key">Name</span><span class="detail-val">${r.name || '<span class=detail-val empty>—</span>'}</span></div>
+      <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val" style="font-family:'JetBrains Mono',monospace;font-size:12px">${r.phone}</span></div>
+      <div class="detail-row"><span class="detail-key">Channel</span><span class="detail-val" style="text-transform:capitalize">${r.ch}</span></div>
+      <div class="detail-row"><span class="detail-key">Location</span><span class="detail-val">${r.district}, ${r.region}</span></div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Intent</div>
+      <div class="detail-row"><span class="detail-key">Intent</span><span class="detail-val" style="text-transform:capitalize">${r.intent}</span></div>
+      ${r.crop ? `<div class="detail-row"><span class="detail-key">Crop</span><span class="detail-val">${r.crop}</span></div>` : ''}
+    </div>
+
+    ${r.fu !== 'none' ? `
+    <div class="followup-box">
+      <div class="panel-section-title">Follow-up</div>
+      <div class="detail-row"><span class="detail-key">Status</span><span class="badge ${fuBadge}">${r.fu}</span></div>
+      ${r.assigned ? `<div class="detail-row"><span class="detail-key">Assigned</span><span class="detail-val">${r.assigned}</span></div>` : ''}
+    </div>` : ''}
+
+    <div class="edit-section">
+      <div class="edit-title">Edit</div>
+      <div class="field" style="margin-bottom:12px">
+        <label>Outcome</label>
+        <select>
+          <option ${r.outcome==='resolved'?'selected':''}>resolved</option>
+          <option ${r.outcome==='referred'?'selected':''}>referred</option>
+          <option ${r.outcome==='scheduled_callback'?'selected':''}>scheduled_callback</option>
+          <option ${r.outcome==='not_qualified'?'selected':''}>not_qualified</option>
+          <option ${r.outcome==='pending'?'selected':''}>pending</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea rows="4" placeholder="Additional notes…"></textarea>
+      </div>
+      <button class="save-btn" onclick="showToast('Log updated!'); closePanel()">Save Changes</button>
+    </div>
+  `;
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('detail-overlay').classList.remove('open');
+}
+
+// ── Mark done modal ───────────────────────────────────────
+let activeFuIdx = null;
+
+function openDoneModal(idx) {
+  activeFuIdx = idx;
+  const f = followups[idx];
+  document.getElementById('done-modal-subtitle').textContent = f.phone + ' · ' + f.name;
+  document.getElementById('done-note').value = '';
+  document.getElementById('done-overlay').classList.add('open');
+}
+
+function closeDoneModal() {
+  document.getElementById('done-overlay').classList.remove('open');
+  activeFuIdx = null;
+}
+
+function confirmDone() {
+  if (activeFuIdx === null) return;
+  // Strike through the row
+  const row = document.getElementById('fu-row-' + activeFuIdx);
+  if (row) {
+    row.classList.add('strikerow');
+    row.querySelector('.btn-done').innerHTML = `<svg class="done-icon" width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Done`;
+    row.querySelector('.btn-done').style.opacity = '.5';
+    row.querySelector('.btn-done').style.pointerEvents = 'none';
+  }
+  closeDoneModal();
+  showToast('Follow-up marked as done!');
+}
+
+// ── Toast ─────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── Init ──────────────────────────────────────────────────
+renderToday();
+renderFollowups();
+
+// Set today date
+const d = new Date(2026, 1, 28);
+document.getElementById('today-date').textContent = d.toLocaleDateString('en-GH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+</script>
+</body>
+</html>
