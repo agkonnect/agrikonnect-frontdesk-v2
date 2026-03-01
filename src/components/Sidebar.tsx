@@ -86,7 +86,7 @@ export default function Sidebar({ profile, onSignOut, followupBadge }: Props) {
       {/* Logo */}
       <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border)' }}>
         <img
-          src="/agrikonnect-logo.jpg"
+          src="/agrikonnect-logo-white.jpg"
           alt="AgriKonnect"
           style={{ width: '100%', borderRadius: 8, display: 'block' }}
         />

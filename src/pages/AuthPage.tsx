@@ -29,7 +29,7 @@ export default function AuthPage({ profileError }: Props) {
         {/* Logo / brand */}
         <div className="text-center mb-8">
           <img
-            src="/agrikonnect-logo.jpg"
+            src="/agrikonnect-logo-white.jpg"
             alt="AgriKonnect"
             style={{ width: 220, borderRadius: 12, margin: '0 auto 16px' }}
           />
