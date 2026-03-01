@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Handler } from '@netlify/functions'
 
-const SUPABASE_URL       = process.env.SUPABASE_URL!
-const SUPABASE_ANON_KEY  = process.env.SUPABASE_ANON_KEY!
-const SERVICE_ROLE_KEY   = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const SUPABASE_URL       = process.env.SUPABASE_URL
+const SUPABASE_ANON_KEY  = process.env.SUPABASE_ANON_KEY
+const SERVICE_ROLE_KEY   = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 const cors = {
   'Access-Control-Allow-Origin':  '*',
@@ -19,6 +19,16 @@ function json(statusCode: number, body: object) {
 export const handler: Handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: cors, body: '' }
   if (event.httpMethod !== 'POST')   return json(405, { error: 'Method not allowed' })
+
+  // Guard: ensure required env vars are present
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SERVICE_ROLE_KEY) {
+    const missing = [
+      !SUPABASE_URL        && 'SUPABASE_URL',
+      !SUPABASE_ANON_KEY   && 'SUPABASE_ANON_KEY',
+      !SERVICE_ROLE_KEY    && 'SUPABASE_SERVICE_ROLE_KEY',
+    ].filter(Boolean).join(', ')
+    return json(500, { error: `Server misconfiguration — missing env vars: ${missing}` })
+  }
 
   // ── 1. Verify caller is an admin ──────────────────────────────────────────
   const authHeader = event.headers['authorization'] ?? ''
