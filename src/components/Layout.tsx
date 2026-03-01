@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import GlobalSearch from './GlobalSearch'
+import { useFollowupBadge } from '../hooks/useFollowupBadge'
 import type { Profile } from '../types'
 
 interface Props {
@@ -20,10 +21,11 @@ const PAGE_META: Record<string, { title: string; sub: string }> = {
 export default function Layout({ profile, onSignOut }: Props) {
   const location = useLocation()
   const meta = PAGE_META[location.pathname] ?? { title: 'AgriKonnect', sub: '' }
+  const { badge } = useFollowupBadge()
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Sidebar profile={profile} onSignOut={onSignOut} />
+      <Sidebar profile={profile} onSignOut={onSignOut} followupBadge={badge} />
 
       <main style={{ flex: 1, overflowY: 'auto', background: 'var(--bg)' }}>
         {/* Page header */}

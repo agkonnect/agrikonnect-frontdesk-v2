@@ -1,9 +1,11 @@
 import { NavLink } from 'react-router-dom'
 import type { Profile } from '../types'
+import type { FollowupBadge } from '../hooks/useFollowupBadge'
 
 interface Props {
   profile: Profile | null
   onSignOut: () => void
+  followupBadge: FollowupBadge
 }
 
 const navItems = [
@@ -70,9 +72,14 @@ const navItems = [
   },
 ]
 
-export default function Sidebar({ profile, onSignOut }: Props) {
+export default function Sidebar({ profile, onSignOut, followupBadge }: Props) {
   const roleClass = profile?.role === 'admin' ? 'role-admin' : 'role-frontdesk'
   const isAdmin   = profile?.role === 'admin'
+
+  const urgentCount = followupBadge.overdue + followupBadge.dueToday
+  const badgeColor  = followupBadge.overdue > 0
+    ? { bg: 'rgba(239,68,68,.18)', text: '#f87171', border: 'rgba(239,68,68,.3)' }
+    : { bg: 'rgba(251,191,36,.15)', text: '#fbbf24', border: 'rgba(251,191,36,.3)' }
 
   return (
     <aside style={{ width: 220, background: 'var(--surface)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', height: '100%', flexShrink: 0 }}>
@@ -108,6 +115,20 @@ export default function Sidebar({ profile, onSignOut }: Props) {
           >
             {item.icon}
             {item.label}
+            {item.to === '/followups' && urgentCount > 0 && (
+              <span title={`${followupBadge.overdue} overdue · ${followupBadge.dueToday} due today`} style={{
+                marginLeft: 'auto',
+                fontSize: 10, fontWeight: 700,
+                background: badgeColor.bg,
+                color: badgeColor.text,
+                border: `1px solid ${badgeColor.border}`,
+                padding: '1px 6px', borderRadius: 10,
+                lineHeight: 1.6,
+                minWidth: 18, textAlign: 'center',
+              }}>
+                {urgentCount > 99 ? '99+' : urgentCount}
+              </span>
+            )}
             {item.adminOnly && (
               <span style={{ marginLeft: 'auto', fontSize: 8, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', background: 'rgba(139,92,246,.2)', color: '#a78bfa', padding: '1px 5px', borderRadius: 4 }}>
                 Admin
