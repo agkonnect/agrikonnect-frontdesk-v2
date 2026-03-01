@@ -84,22 +84,14 @@ export default function Sidebar({ profile, onSignOut, followupBadge }: Props) {
   return (
     <aside style={{ width: 220, background: 'var(--surface)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', height: '100%', flexShrink: 0 }}>
       {/* Logo */}
-      <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{
-          width: 30, height: 30,
-          background: 'var(--emerald)',
-          borderRadius: 9,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0,
-          boxShadow: '0 0 16px rgba(16,185,129,.35)',
-        }}>
-          <svg width="16" height="16" fill="none" stroke="white" viewBox="0 0 24 24" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-          </svg>
-        </div>
-        <div style={{ lineHeight: 1.1 }}>
-          <div style={{ fontFamily: 'Syne, sans-serif', fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.3px' }}>AgriKonnect</div>
-          <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.12em', color: 'var(--dim)', fontWeight: 600 }}>Front Desk</div>
+      <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border)' }}>
+        <img
+          src="/agrikonnect-logo.jpg"
+          alt="AgriKonnect"
+          style={{ width: '100%', borderRadius: 8, display: 'block' }}
+        />
+        <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.12em', color: 'var(--dim)', fontWeight: 600, textAlign: 'center', marginTop: 6 }}>
+          Front Desk
         </div>
       </div>
 
