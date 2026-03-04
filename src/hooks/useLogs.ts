@@ -37,6 +37,13 @@ export function useLogs() {
     setLoading(true)
     setError(null)
 
+    console.log('[AgriKonnect] Fetching logs:', {
+      start: start.toISOString(),
+      end: end.toISOString(),
+      localStart: start.toString(),
+      localEnd: end.toString(),
+    })
+
     const [logsResult, profiles] = await Promise.all([
       supabase
         .from('daily_logs')
@@ -46,6 +53,12 @@ export function useLogs() {
         .order('created_at', { ascending: false }),
       fetchProfiles(),
     ])
+
+    console.log('[AgriKonnect] Query result:', {
+      error: logsResult.error,
+      count: logsResult.data?.length ?? 0,
+      data: logsResult.data,
+    })
 
     if (logsResult.error) {
       const msg = logsResult.error.message
