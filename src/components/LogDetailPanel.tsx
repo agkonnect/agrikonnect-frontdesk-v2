@@ -20,7 +20,6 @@ import {
   FOLLOWUP_STATUS_LABELS,
 } from '../types'
 import { findMatches, isMatchable } from '../lib/matching'
-import { supabase } from '../lib/supabase'
 
 interface Props {
   log: DailyLogWithProfiles | null
