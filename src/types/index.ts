@@ -300,3 +300,24 @@ export function leadTempColor(t: LeadTemperature | null): string {
   if (t === 'cold') return '#60a5fa'
   return 'var(--dim)'
 }
+
+
+// -------------------------------------------------------
+// Ambassador types
+// -------------------------------------------------------
+
+export type AmbassadorType = 'field' | 'digital'
+export type AmbassadorStatus = 'active' | 'inactive'
+export type AmbassadorTier = 1 | 2 | 3
+
+export interface Ambassador {
+  id: string
+  created_at: string
+  name: string
+  phone: string
+  region: string
+  type: AmbassadorType
+  tier: AmbassadorTier
+  status: AmbassadorStatus
+  notes?: string
+}
