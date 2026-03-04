@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { format, startOfDay, endOfDay, subDays, parseISO } from 'date-fns'
+import { format, startOfDay, endOfDay, subDays, subHours, parseISO } from 'date-fns'
 import { supabase } from '../lib/supabase'
 import { useLogs } from '../hooks/useLogs'
 import { matchInList } from '../lib/matching'
@@ -63,7 +63,7 @@ function topCrops(logs: DailyLogWithProfiles[]): { crop: string; count: number }
 
 function getRange(preset: Preset, customFrom: string, customTo: string): { start: Date; end: Date } {
   const today = new Date()
-  if (preset === 'today')     return { start: startOfDay(today), end: endOfDay(today) }
+  if (preset === 'today')     return { start: subHours(today, 24), end: today }
   if (preset === 'yesterday') { const d = subDays(today, 1); return { start: startOfDay(d), end: endOfDay(d) } }
   if (preset === 'last7')     return { start: startOfDay(subDays(today, 6)), end: endOfDay(today) }
   const s = customFrom ? parseISO(customFrom) : today
