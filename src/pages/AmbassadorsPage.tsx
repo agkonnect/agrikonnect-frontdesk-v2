@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Ambassador, DailyLog } from '../types';
-import { computeTierStatus, getTierLabel, getTierColor, getTierBorderColor, TierStatus } from '../lib/ambassadorTier';
+import type { Ambassador, DailyLog } from '../types';
+import { computeTierStatus, getTierLabel, getTierColor, getTierBorderColor, type TierStatus } from '../lib/ambassadorTier';
 
 const REGIONS = ['Ashanti','Greater Accra','Central','Eastern','Western','Northern','Upper East','Upper West','Volta','Brong-Ahafo','Savannah','North East','Bono','Bono East','Ahafo','Western North','Oti'];
 interface FD { name:string; region:string; phone:string; type:'field'|'digital'; tier:1|2|3; status:'active'|'inactive'; notes:string; }
