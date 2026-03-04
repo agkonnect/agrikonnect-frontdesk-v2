@@ -1,4 +1,4 @@
-import { Ambassador, DailyLog } from '../types';
+import type { Ambassador, DailyLog } from '../types';
 
 export interface TierStatus {
   currentTier: 1 | 2 | 3;
