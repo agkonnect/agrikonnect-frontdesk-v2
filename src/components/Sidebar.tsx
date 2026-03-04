@@ -30,6 +30,16 @@ const navItems = [
     ),
   },
   {
+    to: '/matching',
+    label: 'Matching',
+    adminOnly: false,
+    icon: (
+      <svg className="w-[15px] h-[15px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    ),
+  },
+  {
     to: '/followups',
     label: 'Follow-ups',
     adminOnly: false,

@@ -10,6 +10,7 @@ import FollowupsPage from './pages/FollowupsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import SettingsPage from './pages/SettingsPage'
 import UsersPage from './pages/UsersPage'
+import MatchingPage from './pages/MatchingPage'
 
 const TOAST_STYLE = {
   style: { background: '#18281f', color: '#a7f3d0', border: '1px solid rgba(16,185,129,.3)', fontFamily: 'DM Sans, sans-serif' },
@@ -54,6 +55,7 @@ export default function App() {
             <Route index element={<Navigate to="/new" replace />} />
             <Route path="/new"       element={<NewLogPage />} />
             <Route path="/logs"       element={<TodayPage isAdmin={isAdmin} />} />
+            <Route path="/matching"   element={<MatchingPage />} />
             <Route path="/followups"  element={<FollowupsPage />} />
             <Route path="/analytics"  element={<AnalyticsPage />} />
             <Route path="/users"      element={<UsersPage />} />

@@ -12,6 +12,7 @@ interface Props {
 const PAGE_META: Record<string, { title: string; sub: string }> = {
   '/new':        { title: 'New Log',     sub: 'Record a new contact interaction' },
   '/logs':       { title: 'Logs',        sub: 'Browse and filter contact logs by date' },
+  '/matching':   { title: 'Matching',     sub: 'Connect farmers with buyers — live match dashboard' },
   '/followups':  { title: 'Follow-ups',  sub: 'Track and action pending follow-ups' },
   '/analytics':  { title: 'Analytics',   sub: 'Performance overview and trends' },
   '/users':      { title: 'Users',       sub: 'Manage team accounts and permissions' },

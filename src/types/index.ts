@@ -46,6 +46,10 @@ export type Intent = 'sell' | 'buy' | 'distributor' | 'logistics' | 'pricing' | 
 export type Timeframe = 'now' | '1_week' | '1_month' | 'unknown'
 export type Outcome = 'resolved' | 'referred' | 'scheduled_callback' | 'not_qualified' | 'pending'
 export type FollowupStatus = 'none' | 'pending' | 'done'
+export type LeadTemperature = 'hot' | 'warm' | 'cold'
+export type LanguagePreference = 'english' | 'twi' | 'ga' | 'hausa' | 'dagbani' | 'ewe' | 'other'
+export type VerificationStatus = 'unverified' | 'pending' | 'verified'
+export type PaymentMethodPref = 'mtn_momo' | 'vodafone_cash' | 'airteltigo_money' | 'bank_transfer' | 'cash' | 'other'
 
 export interface DailyLog {
   id: string
@@ -56,6 +60,18 @@ export interface DailyLog {
   channel: Channel
   contact_name: string | null
   phone: string
+
+  // Growth engine fields
+  whatsapp_number: string | null
+  language_preference: LanguagePreference | null
+  lead_temperature: LeadTemperature | null
+  verification_status: VerificationStatus | null
+  ambassador_id: string | null
+  referral_source_name: string | null
+  price_offered: number | null
+  price_unit: string | null
+  payment_method_pref: PaymentMethodPref | null
+  farm_size_acres: number | null
 
   region: string
   district: string
@@ -94,6 +110,11 @@ export interface NewLogFormValues {
   channel: Channel
   contact_name: string
   phone: string
+  whatsapp_number: string
+  language_preference: LanguagePreference
+  lead_temperature: LeadTemperature
+  ambassador_id: string
+  referral_source_name: string
   region: string
   district: string
   community: string
@@ -102,6 +123,10 @@ export interface NewLogFormValues {
   crop: string
   quantity: string
   timeframe: Timeframe
+  price_offered: string
+  price_unit: string
+  payment_method_pref: PaymentMethodPref | ''
+  farm_size_acres: string
   outcome: Outcome
   followup_needed: boolean
   followup_datetime: string
@@ -114,6 +139,11 @@ export const DEFAULT_FORM_VALUES: NewLogFormValues = {
   channel: 'walk-in',
   contact_name: '',
   phone: '',
+  whatsapp_number: '',
+  language_preference: 'english',
+  lead_temperature: 'warm',
+  ambassador_id: '',
+  referral_source_name: '',
   region: '',
   district: '',
   community: '',
@@ -122,6 +152,10 @@ export const DEFAULT_FORM_VALUES: NewLogFormValues = {
   crop: '',
   quantity: '',
   timeframe: 'unknown',
+  price_offered: '',
+  price_unit: 'per_bag_50kg',
+  payment_method_pref: '',
+  farm_size_acres: '',
   outcome: 'pending',
   followup_needed: false,
   followup_datetime: '',
@@ -183,6 +217,41 @@ export const FOLLOWUP_STATUS_LABELS: Record<FollowupStatus, string> = {
   done: 'Done',
 }
 
+export const LANGUAGE_LABELS: Record<LanguagePreference, string> = {
+  english: 'English',
+  twi: 'Twi',
+  ga: 'Ga',
+  hausa: 'Hausa',
+  dagbani: 'Dagbani',
+  ewe: 'Ewe',
+  other: 'Other',
+}
+
+export const VERIFICATION_STATUS_LABELS: Record<VerificationStatus, string> = {
+  unverified: 'Unverified',
+  pending: 'Pending Verification',
+  verified: 'Verified',
+}
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethodPref, string> = {
+  mtn_momo: 'MTN MoMo',
+  vodafone_cash: 'Vodafone Cash',
+  airteltigo_money: 'AirtelTigo Money',
+  bank_transfer: 'Bank Transfer',
+  cash: 'Cash',
+  other: 'Other',
+}
+
+export const PRICE_UNIT_LABELS: Record<string, string> = {
+  per_kg: 'per kg',
+  per_bag_50kg: 'per 50kg bag',
+  per_bag_100kg: 'per 100kg bag',
+  per_crate: 'per crate',
+  per_bunch: 'per bunch',
+  per_piece: 'per piece',
+  other: 'other unit',
+}
+
 // ── Badge CSS class helpers ──────────────────────────────
 
 export function contactTypeBadge(t: ContactType): string {
@@ -214,4 +283,20 @@ export function followupBadge(s: FollowupStatus): string {
     done:    'badge badge-fu-done',
   }
   return map[s] ?? 'badge badge-fu-none'
+}
+
+export function verificationBadge(s: VerificationStatus): string {
+  const map: Record<VerificationStatus, string> = {
+    unverified: 'badge badge-not-qualified',
+    pending:    'badge badge-scheduled',
+    verified:   'badge badge-resolved',
+  }
+  return map[s] ?? 'badge badge-inquiry'
+}
+
+export function leadTempColor(t: LeadTemperature | null): string {
+  if (t === 'hot')  return '#ef4444'
+  if (t === 'warm') return '#f59e0b'
+  if (t === 'cold') return '#60a5fa'
+  return 'var(--dim)'
 }
