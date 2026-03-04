@@ -155,7 +155,7 @@ CREATE OR REPLACE VIEW public.crop_demand_summary AS
   FROM public.daily_logs
   WHERE crop IS NOT NULL AND crop != ''
   GROUP BY lower(trim(crop))
-  ORDER BY supply_count + demand_count DESC;
+  ORDER BY (count(*) FILTER (WHERE contact_type = 'farmer' AND intent = 'sell') + count(*) FILTER (WHERE contact_type = 'buyer' AND intent = 'buy')) DESC;
 
 COMMENT ON VIEW public.crop_demand_summary IS 'Live supply/demand summary per crop for matching and analytics.';
 
