@@ -39,9 +39,14 @@ export const handler: Handler = async (event) => {
     global: { headers: { Authorization: `Bearer ${jwt}` } },
   })
 
+  // Get the caller's user ID from the JWT first
+  const { data: { user: callerUser }, error: userError } = await callerClient.auth.getUser()
+  if (userError || !callerUser) return json(401, { error: 'Invalid auth token' })
+
   const { data: callerProfile, error: callerError } = await callerClient
     .from('profiles')
     .select('role')
+    .eq('id', callerUser.id)
     .single()
 
   if (callerError || callerProfile?.role !== 'admin') {
