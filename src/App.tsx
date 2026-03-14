@@ -9,6 +9,7 @@ import TodayPage from './pages/TodayPage'
 import FollowupsPage from './pages/FollowupsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import AmbassadorsPage from './pages/AmbassadorsPage'
+import MarketPricesPage from './pages/MarketPricesPage'
 import SettingsPage from './pages/SettingsPage'
 import UsersPage from './pages/UsersPage'
 import MatchingPage from './pages/MatchingPage'
@@ -60,6 +61,8 @@ export default function App() {
             <Route path="/followups"  element={<FollowupsPage />} />
             <Route path="/analytics"  element={<AnalyticsPage />} />
             <Route path="/users"      element={<UsersPage />} />
+            <Route path="/ambassadors" element={<AmbassadorsPage />} />
+            <Route path="/market-prices" element={<MarketPricesPage />} />
             <Route path="/settings"   element={<SettingsPage />} />
             <Route path="/today"      element={<Navigate to="/logs" replace />} />
             <Route path="*"          element={<Navigate to="/new" replace />} />
