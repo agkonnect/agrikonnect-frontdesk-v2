@@ -306,18 +306,24 @@ export function leadTempColor(t: LeadTemperature | null): string {
 // Ambassador types
 // -------------------------------------------------------
 
-export type AmbassadorType = 'field' | 'digital'
-export type AmbassadorStatus = 'active' | 'inactive'
-export type AmbassadorTier = 1 | 2 | 3
+export type AmbassadorTier = 'starter' | 'active' | 'star'
+export type AmbassadorPaymentMethod = 'mtn_momo' | 'vodafone_cash' | 'airteltigo_money' | 'cash'
 
 export interface Ambassador {
-  id: string
-  created_at: string
-  name: string
+  id: string           // AMB-XXXXXXXX format
+  full_name: string
   phone: string
+  whatsapp_number: string | null
   region: string
-  type: AmbassadorType
+  district: string
+  community: string | null
   tier: AmbassadorTier
-  status: AmbassadorStatus
-  notes?: string
+  is_active: boolean
+  referral_count: number
+  transaction_count: number
+  monthly_target: number
+  payment_number: string | null
+  payment_method: AmbassadorPaymentMethod | null
+  joined_at: string
+  notes: string | null
 }
